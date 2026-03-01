@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тренажёр ударений</title>
+
+  <meta name="description" content="Тренажёр 4 задания ЕГЭ по русскому языку: орфоэпия и ударения. Все слова взяты из орфоэпического списока – 2026 от ФИПИ.">
+  <meta name="keywords" content="ЕГЭ русский, орфоэпия, ударения, тренажёр ЕГЭ, ФИПИ">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:title" content="Тренажёр 4 задания ЕГЭ: ударения">
+  <meta property="og:description" content="Прокачивайте орфоэпию для 4 задания ЕГЭ. Слова из официального списка ФИПИ 2026.">
+  <meta property="og:site_name" content="Тренажёр ударений ЕГЭ">
+  <meta property="og:image" content="./og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Тренажёр 4 задания ЕГЭ">
+  <meta name="twitter:description" content="Тренировка орфоэпии по списку ФИПИ 2026.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563eb'/%3E%3Ccircle cx='20' cy='34' r='5' fill='white'/%3E%3Ccircle cx='32' cy='34' r='5' fill='white'/%3E%3Ccircle cx='44' cy='34' r='5' fill='white'/%3E%3Cpath d='M32 12 L38 24 H26 Z' fill='%23fde047'/%3E%3C/svg%3E">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "\u0422\u0440\u0435\u043d\u0430\u0436\u0451\u0440 4 \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u0415\u0413\u042d \u043f\u043e \u0440\u0443\u0441\u0441\u043a\u043e\u043c\u0443 \u044f\u0437\u044b\u043a\u0443",
+      "applicationCategory": "EducationalApplication",
+      "inLanguage": "ru",
+      "about": "\u041e\u0440\u0444\u043e\u044d\u043f\u0438\u044f \u0438 \u0443\u0434\u0430\u0440\u0435\u043d\u0438\u044f \u0434\u043b\u044f \u0415\u0413\u042d \u043f\u043e \u0440\u0443\u0441\u0441\u043a\u043e\u043c\u0443 \u044f\u0437\u044b\u043a\u0443",
+      "description": "\u0422\u0440\u0435\u043d\u0430\u0436\u0451\u0440 \u0434\u043b\u044f 4 \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u0415\u0413\u042d \u043f\u043e \u043e\u0440\u0444\u043e\u044d\u043f\u0438\u0438. \u0412\u0441\u0435 \u0441\u043b\u043e\u0432\u0430 \u0432\u0437\u044f\u0442\u044b \u0438\u0437 \u00ab\u041e\u0440\u0444\u043e\u044d\u043f\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0441\u043f\u0438\u0441\u043e\u043a \u2013 2026\u00bb \u043e\u0442 \u0424\u0418\u041f\u0418."
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg: #fafafa;
+      --text: #111;
+      --muted: #777;
+      --accent: #2563eb;
+      --ok: #16a34a;
+      --bad: #dc2626;
+      --chip: #f1f1f1;
+      --chip-hover: #e5e5e5;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 24px 16px 90px;
+    }
+
+    main {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 18px;
+      flex-grow: 1;
+      justify-content: flex-start;
+    }
+
+    .quiz-area {
+      width: 100%;
+      min-height: clamp(260px, 52vh, 560px);
+      padding-top: clamp(18px, 5vh, 64px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .word {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 0;
+      font-size: clamp(28px, 6vw, 40px);
+      font-weight: 500;
+      user-select: none;
+    }
+
+    .letter {
+      padding: 6px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.05s ease;
+    }
+
+    .letter:hover {
+      background: var(--chip-hover);
+    }
+
+    .letter:active {
+      transform: scale(0.96);
+    }
+
+    .letter.correct {
+      background: rgba(22, 163, 74, 0.15);
+      color: var(--ok);
+    }
+
+    .letter.wrong {
+      background: rgba(220, 38, 38, 0.15);
+      color: var(--bad);
+    }
+
+    .result {
+      font-size: 18px;
+      font-weight: 500;
+      min-height: 24px;
+    }
+
+    .result.ok {
+      color: var(--ok);
+    }
+
+    .result.bad {
+      color: var(--bad);
+    }
+
+    .stats {
+      font-size: 14px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .wrong-list {
+      width: 100%;
+      max-width: 640px;
+      background: #fff;
+      border: 1px solid #ececec;
+      border-radius: var(--radius);
+      padding: 12px;
+      font-size: 14px;
+    }
+
+    .wrong-list h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .wrong-list p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .wrong-list ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+
+    .wrong-list li {
+      margin: 6px 0;
+      line-height: 1.35;
+    }
+
+    .restart-wrap {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .restart-btn {
+      width: 100%;
+      max-width: 420px;
+      padding: 16px 18px;
+      font-size: clamp(18px, 2.8vw, 24px);
+      font-weight: 700;
+      color: #fff;
+      background: #2563eb;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.28);
+      transition: transform 0.08s ease, box-shadow 0.15s ease;
+    }
+
+    .restart-btn:hover {
+      box-shadow: 0 10px 26px rgba(37, 99, 235, 0.34);
+    }
+
+    .restart-btn:active {
+      transform: translateY(1px);
+    }
+
+    .reset-btn {
+      padding: 8px 12px;
+      border: 1px solid #d8d8d8;
+      border-radius: 10px;
+      background: #fff;
+      color: #444;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
+      border-top: 1px solid #ececec;
+      z-index: 20;
+    }
+
+    .footer-inner {
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--muted);
+      padding: 12px 16px;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .footer-inner {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+
+</head>
+<body>
+
+  <main>
+    <div class="quiz-area">
+      <div class="word" id="word"></div>
+      <div class="result" id="result"></div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="restart-wrap hidden" id="restartWrap">
+      <button class="restart-btn" id="restartBtn" type="button">Пройти заново</button>
+    </div>
+    <section class="wrong-list" id="wrongList"></section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+    <div id="progress"></div>
+    <button class="reset-btn" id="resetTestBtn" type="button">Сбросить тест</button>
+     <a href="https://doc.fipi.ru/navigator-podgotovki/navigator-ege/2026/ru-1-fonetika.pdf" target="_blank">«Орфоэпический спискок – 2026» от ФИПИ</a>
+    </div>
+  </footer>
+
+  <script>
+    /*
+      МАССИВ УДАРЕНИЙ
+      ----------------
+      Формат:
+      слово с ударением (одна заглавная гласная)
+    */
+
+    const STRESSED_WORDS = ["аэропОрты","бАнты","бОроду","бухгАлтеров","вероисповЕдание","водопровОд","газопровОд","граждАнство","дефИс","дешевИзна","диспансЕр","договорЁнность","докумЕнт","досУг","еретИк","жалюзИ","знАчимость","Иксы","каталОг","квартАл (во всех значениях)","киломЕтр","кОнусов","корЫсть","крАны","кремЕнь","кремнЯ","лЕкторов","лОктя","локтЕй","лыжнЯ","мЕстностей","намЕрение","нЕдруг","недУг","некролОг","нЕнависть","нефтепровОд","новостЕй","нОгтя","ногтЕй","Отзыв (о книге)","отзЫв (посла из страны)","Отрочество","партЕр","портфЕль","придАное","призЫв","свЁкла","сирОты","созЫв","сосредотОчение","срЕдства","стАтуя","столЯр","тамОжня","тОрты","тУфля","цемЕнт","цЕнтнер","цепОчка","шАрфы","шофЁр","экспЕрт","вернА","знАчимый","красИвее","красИвейший","кУхонный","ловкА","мозаИчный","оптОвый","прозорлИвый","прозорлИва","слИвовый","бралА","бралАсь","взялА","взялАсь","влилАсь","ворвалАсь","воспринЯть","воспринялА","воссоздалА","вручИт","гналА","гналАсь","добралА","добралАсь","дождалАсь","дозвонИтся","дозИровать","ждалА","закУпорить","занЯть","зАнял","заперлА","запломбировАть","защемИт","звалА","звонИт","кАшлянуть","клАла","клЕить","крАлась","кровоточИть","лгалА","лилА","лилАсь","наделИт","надорвалАсь","назвалАсь","накренИтся","налилА","нарвалА","начАть","нАчал","обзвонИт","облегчИть","облегчИт","облилАсь","обнялАсь","обогналА","ободралА","ободрИть","ободрИт","ободрИться","ободрИтся","обострИть","одолжИть","одолжИт","озлОбить","оклЕить","окружИт","опОшлить","освЕдомиться","освЕдомится","отбылА","отдалА","откУпорить","отозвалА","отозвалАсь","перезвонИт","перелилА","плодоносИть","пломбировАть","повторИт","позвалА","позвонИт","полилА","положИть","положИл","понЯть","понялА","послАла","прибЫть","прИбыл","принЯть","прИнял","рвалА","сверлИт","снялА","создалА","сорвалА","убралА","углубИть","укрепИт","чЕрпать","щемИт","щЁлкать","довезЁнный","зАгнутый","зАнятый","занятА","зАпертый","заселЁнный","заселенА","кровоточАщий","нажИвший","налИвший","нанЯвшийся","начАвший","нАчатый","низведЁнный","облегчЁнный","ободрЁнный","обострЁнный","отключЁнный","повторЁнный","поделЁнный","понЯвший","прИнятый","принятА","приручЁнный","прожИвший","снятА","сОгнутый","углублЁнный","закУпорив","начАв","начАвшись","отдАв","понЯв","прибЫв","создАв","вОвремя","дОверху","дОнизу","дОсуха","зАсветло","красИвее","надОлго","ненадОлго"];
+    /* ===================== */
+
+    const VOWELS = "аеёиоуыэюя";
+    const STORAGE_KEY = "stress-trainer";
+
+    function normalize(word) {
+      return word
+        .toLowerCase()
+        .replace(/ё/g, "е");
+    }
+
+    const DATA = STRESSED_WORDS.map(original => {
+      const normalized = normalize(original);
+      const stressIndex = [...original].findIndex(c => VOWELS.includes(c.toLowerCase()) && c !== c.toLowerCase());
+
+      return {
+        original,
+        normalized,
+        stressIndex,
+      };
+    });
+
+    function buildInitialState() {
+      return {
+        version: 2,
+        index: 0,
+        correct: 0,
+        total: 0,
+        finished: false,
+        wrong: [],
+      };
+    }
+
+    function normalizeState(raw) {
+      if (!raw || typeof raw !== "object") return buildInitialState();
+
+      const next = buildInitialState();
+      next.index = Number.isInteger(raw.index) ? raw.index : 0;
+      next.correct = Number.isInteger(raw.correct) ? raw.correct : 0;
+      next.total = Number.isInteger(raw.total) ? raw.total : 0;
+      next.finished = Boolean(raw.finished);
+      next.wrong = Array.isArray(raw.wrong) ? raw.wrong.filter(item => item && typeof item === "object") : [];
+
+      if (next.index >= DATA.length && DATA.length > 0) next.finished = true;
+      return next;
+    }
+
+    let state = normalizeState(JSON.parse(localStorage.getItem(STORAGE_KEY)));
+    let locked = false;
+
+    const wordEl = document.getElementById("word");
+    const resultEl = document.getElementById("result");
+    const statsEl = document.getElementById("stats");
+    const progressEl = document.getElementById("progress");
+    const wrongListEl = document.getElementById("wrongList");
+    const restartWrapEl = document.getElementById("restartWrap");
+    const restartBtnEl = document.getElementById("restartBtn");
+    const resetTestBtnEl = document.getElementById("resetTestBtn");
+
+    function save() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function resetProgress() {
+      localStorage.removeItem(STORAGE_KEY);
+      state = buildInitialState();
+      locked = false;
+      render();
+    }
+
+    function formatWithStress(word, stressIndex) {
+      if (stressIndex < 0) return word;
+      return [...word]
+        .map((ch, i) => (i === stressIndex ? ch.toUpperCase() : ch))
+        .join("");
+    }
+
+    function renderWrongList() {
+      if (!state.wrong.length) {
+        wrongListEl.innerHTML = "<h3>Ошибки</h3><p>Пока ошибок нет.</p>";
+        return;
+      }
+
+      const items = state.wrong
+        .map(item => `<li>Ваш ответ: <b>${item.userAnswer}</b> | Правильный: <b>${item.correctAnswer}</b></li>`)
+        .join("");
+      wrongListEl.innerHTML = `<h3>Ошибки (${state.wrong.length})</h3><ul>${items}</ul>`;
+    }
+
+    function render() {
+      if (!DATA.length) {
+        wordEl.textContent = "Что-то пошло не так";
+        return;
+      }
+
+      renderWrongList();
+
+      if (state.finished || state.index >= DATA.length) {
+        state.finished = true;
+        save();
+        wordEl.textContent = "Все слова пройдены";
+        resultEl.textContent = "Тест завершен.";
+        resultEl.className = "result";
+        statsEl.textContent = `Итог: ${state.correct} / ${DATA.length}`;
+        progressEl.textContent = `Пройдено: ${DATA.length} / ${DATA.length}`;
+        restartWrapEl.classList.remove("hidden");
+        resetTestBtnEl.classList.add("hidden");
+        return;
+      }
+
+      const item = DATA[state.index];
+      wordEl.innerHTML = "";
+      resultEl.textContent = "";
+      resultEl.className = "result";
+      restartWrapEl.classList.add("hidden");
+      resetTestBtnEl.classList.remove("hidden");
+      locked = false;
+
+      [...item.normalized].forEach((char, i) => {
+        const span = document.createElement("span");
+        span.className = "letter";
+        span.textContent = char;
+        if (/[a-zа-яё]/i.test(char)) {
+          span.onclick = () => handleClick(i);
+        } else {
+          span.style.cursor = "default";
+        }
+        wordEl.appendChild(span);
+      });
+
+      statsEl.textContent = `Правильных ответов: ${state.correct} / ${state.total}`;
+      progressEl.textContent = `Пройдено: ${state.index} / ${DATA.length}`;
+    }
+
+    function handleClick(index) {
+      if (locked) return;
+
+      const item = DATA[state.index];
+      if (!item || item.stressIndex < 0) return;
+
+      locked = true;
+      const letters = document.querySelectorAll(".letter");
+      const userAnswer = formatWithStress(item.normalized, index);
+      const correctAnswer = item.original;
+
+      state.total++;
+
+      letters.forEach((l, i) => {
+        if (i === item.stressIndex) l.classList.add("correct");
+        if (i === index && i !== item.stressIndex) l.classList.add("wrong");
+      });
+
+      if (index === item.stressIndex) {
+        state.correct++;
+        resultEl.textContent = "Верно";
+        resultEl.classList.add("ok");
+      } else {
+        resultEl.textContent = "Неверно";
+        resultEl.classList.add("bad");
+        state.wrong.push({
+          word: item.normalized,
+          userAnswer,
+          correctAnswer,
+          answeredAt: Date.now(),
+        });
+      }
+
+      state.index++;
+      if (state.index >= DATA.length) state.finished = true;
+      save();
+      renderWrongList();
+
+      setTimeout(render, 1200);
+    }
+
+    restartBtnEl.addEventListener("click", resetProgress);
+    resetTestBtnEl.addEventListener("click", resetProgress);
+
+    render();
+  </script>
+
+</body>
+</html>
+
