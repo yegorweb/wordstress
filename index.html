@@ -209,6 +209,56 @@
       font-size: 13px;
     }
 
+    .settings-btn {
+      border: none;
+      background: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 4px 2px;
+    }
+
+    .settings-dialog {
+      border: none;
+      border-radius: var(--radius);
+      width: min(520px, 92vw);
+      padding: 16px;
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.25);
+    }
+
+    .settings-dialog::backdrop {
+      background: rgba(37, 99, 235, 0.2);
+      backdrop-filter: blur(2px);
+    }
+
+    .dialog-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .dialog-head h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .dialog-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .settings-input {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #d8d8d8;
+      padding: 10px 12px;
+      font: inherit;
+    }
+
     .hidden {
       display: none;
     }
@@ -246,7 +296,7 @@
       text-decoration: underline;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 640px) {
       .footer-inner {
         flex-direction: column;
         gap: 8px;
@@ -281,8 +331,23 @@
     <div id="progress"></div>
     <button class="reset-btn" id="resetTestBtn" type="button">Сбросить тест</button>
      <a href="https://doc.fipi.ru/navigator-podgotovki/navigator-ege/2026/ru-1-fonetika.pdf" target="_blank">«Орфоэпический список – 2026» от ФИПИ</a>
+     <button class="settings-btn" id="openSettingsBtn" type="button">Настройки</button>
     </div>
   </footer>
+
+  <dialog class="settings-dialog" id="settingsDialog">
+    <div class="dialog-head">
+      <h3>Настройки</h3>
+      <button class="reset-btn" id="closeSettingsBtn" type="button">Закрыть</button>
+    </div>
+    <div class="dialog-field">
+      <label for="delayInput">Задержка перед сменой слова (мс)</label>
+      <input class="settings-input" id="delayInput" type="number" min="0" step="100" />
+      <div class="stats">Например: 800 или 1200. Значение сохраняется.</div>
+      <button class="reset-btn" id="resetSettingsBtn" type="button">Сбросить настройки</button>
+    </div>
+  </dialog>
+
 
   <script>
     /*
@@ -297,6 +362,8 @@
 
     const VOWELS = "аеёиоуыэюя";
     const STORAGE_KEY = "stress-trainer";
+    const SETTINGS_KEY = `${STORAGE_KEY}-settings`;
+    const DEFAULT_DELAY_MS = 1000;
 
     function normalize(word) {
       return word
@@ -340,6 +407,37 @@
       return next;
     }
 
+    function normalizeDelay(value) {
+      if (value === undefined || value === null || value === "") return DEFAULT_DELAY_MS;
+      const num = Number(value);
+      if (!Number.isFinite(num) || num < 0) return DEFAULT_DELAY_MS;
+      return Math.round(num);
+    }
+
+    function loadSettings() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+        return {
+          delayMs: normalizeDelay(raw && raw.delayMs),
+        };
+      } catch (error) {
+        return { delayMs: DEFAULT_DELAY_MS };
+      }
+    }
+
+    function saveSettings() {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    }
+
+    function updateDelay(value) {
+      const num = Number(value);
+      if (!Number.isFinite(num) || num < 0) return;
+      settings.delayMs = Math.round(num);
+      saveSettings();
+    }
+
+    let settings = loadSettings();
+
     let state = normalizeState(JSON.parse(localStorage.getItem(STORAGE_KEY)));
     let locked = false;
 
@@ -351,6 +449,11 @@
     const restartWrapEl = document.getElementById("restartWrap");
     const restartBtnEl = document.getElementById("restartBtn");
     const resetTestBtnEl = document.getElementById("resetTestBtn");
+    const settingsBtnEl = document.getElementById("openSettingsBtn");
+    const settingsDialogEl = document.getElementById("settingsDialog");
+    const closeSettingsBtnEl = document.getElementById("closeSettingsBtn");
+    const resetSettingsBtnEl = document.getElementById("resetSettingsBtn");
+    const delayInputEl = document.getElementById("delayInput");
 
     function save() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -465,11 +568,70 @@
       save();
       renderWrongList();
 
-      setTimeout(render, 1200);
+      setTimeout(render, settings.delayMs);
     }
 
     restartBtnEl.addEventListener("click", resetProgress);
     resetTestBtnEl.addEventListener("click", resetProgress);
+
+    if (delayInputEl) {
+      delayInputEl.value = settings.delayMs;
+      delayInputEl.addEventListener("input", () => {
+        if (delayInputEl.value.trim() == "") return;
+        updateDelay(delayInputEl.value);
+      });
+      delayInputEl.addEventListener("blur", () => {
+        if (delayInputEl.value.trim() == "") {
+          delayInputEl.value = settings.delayMs;
+          return;
+        }
+        const num = Number(delayInputEl.value);
+        if (!Number.isFinite(num) || num < 0) {
+          delayInputEl.value = settings.delayMs;
+        }
+      });
+    }
+
+    if (settingsBtnEl && settingsDialogEl) {
+      settingsBtnEl.addEventListener("click", () => {
+    if (delayInputEl) delayInputEl.value = settings.delayMs;
+        if (typeof settingsDialogEl.showModal === "function") {
+          settingsDialogEl.showModal();
+        } else {
+          settingsDialogEl.setAttribute("open", "open");
+        }
+      });
+    }
+
+    if (closeSettingsBtnEl && settingsDialogEl) {
+      closeSettingsBtnEl.addEventListener("click", () => {
+        if (typeof settingsDialogEl.close === "function") {
+          settingsDialogEl.close();
+        } else {
+          settingsDialogEl.removeAttribute("open");
+        }
+      });
+    }
+
+    if (settingsDialogEl) {
+      settingsDialogEl.addEventListener("click", event => {
+        if (event.target === settingsDialogEl) {
+          if (typeof settingsDialogEl.close === "function") {
+            settingsDialogEl.close();
+          } else {
+            settingsDialogEl.removeAttribute("open");
+          }
+        }
+      });
+    }
+
+    if (resetSettingsBtnEl && delayInputEl) {
+      resetSettingsBtnEl.addEventListener("click", () => {
+        settings.delayMs = DEFAULT_DELAY_MS;
+        saveSettings();
+        delayInputEl.value = settings.delayMs;
+      });
+    }
 
     render();
   </script>
